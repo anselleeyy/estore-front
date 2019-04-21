@@ -1,0 +1,152 @@
+<template>
+  <div class="good-item">
+    <div style="">
+      <div class="good-img">
+          <a @click="openProduct(msg.id)">
+            <img v-lazy="msg.picUrl" :alt="msg.title" :key="msg.picUrl">
+          </a>
+      </div>
+      <h6 class="good-title" v-html="msg.title">{{ msg.title }}</h6>
+      <div class="pdt-3">
+        <h3 class="ellipsis">{{ msg.author }}</h3>
+        <h3 class="ellipsis">出版社：{{ msg.publisher }}</h3>
+      </div>
+      <div class="good-price pr">
+        <div class="ds pa">
+          <a @click="openProduct(msg.id)">
+            <y-button text="查看详情" style="margin: 0 5px"></y-button>
+          </a>
+          <y-button text="加入购物车"
+                    style="margin: 0 5px"
+                    @btnClick="addCart(msg.id, msg.price, msg.title, msg.picUrl)"
+                    classStyle="main-btn"
+          ></y-button>
+        </div>
+        <p><span style="font-size:14px">￥</span>{{ Number(msg.price).toFixed(2) }}</p>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import YButton from './YButton'
+import { addCart } from '../api/index'
+import { mapMutations, mapState } from 'vuex'
+import { getStore } from '../utils/storage'
+export default {
+  props: {
+    msg: {
+      price: 0
+    }
+  },
+  data () {
+    return {}
+  },
+  computed: {
+    ...mapState([ 'login', 'showMoveImg', 'showCart' ])
+  },
+  methods: {
+    ...mapMutations([ 'ADD_CART', 'ADD_ANIMATION', 'SHOW_CART' ]),
+    openProduct (id) {
+      window.open('//' + window.location.host + '/#/goodsDetail?itemId=' + id)
+    },
+    addCart (id, price, name, img) {
+      if (!this.showMoveImg) {
+        if (this.login) { // 登录了 直接存在用户名下
+          addCart(
+            {
+              userId: parseInt(getStore('userId')),
+              itemId: id,
+              number: 1
+            }).then(res => {
+            // 并不重新请求数据
+            this.ADD_CART({ itemId: id, price: price, title: name, picUrl: img })
+          })
+        } else { // 未登录 vuex
+          this.ADD_CART({ itemId: id, price: price, title: name, picUrl: img })
+        }
+        // 加入购物车动画x`
+        let dom = event.target
+        // 获取点击的坐标
+        let elLeft = dom.getBoundingClientRect().left + (dom.offsetWidth / 2)
+        let elTop = dom.getBoundingClientRect().top + (dom.offsetHeight / 2)
+        // 需要触发
+        this.ADD_ANIMATION({ moveShow: true, elLeft: elLeft, elTop: elTop, img: img })
+        if (!this.showCart) {
+          this.SHOW_CART({ showCart: true })
+        }
+      }
+    }
+  },
+  mounted () {
+  },
+  components: {
+    YButton
+  }
+}
+</script>
+<style lang="scss" rel="stylesheet/scss" scoped>
+  @import "../assets/style/mixin";
+  @import "../assets/style/theme";
+
+  .good-item {
+    background: #fff;
+    width: 25%;
+    transition: all .5s;
+    height: 400px;
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 1px 1px 20px #999;
+      .good-price p {
+        display: none;
+      }
+      .ds {
+        display: flex;
+      }
+    }
+    .ds {
+      @extend %block-center;
+      width: 100%;
+      display: none;
+    }
+
+    .good-img {
+      img {
+        margin: 50px auto 10px;
+        @include wh(230px, 180px);
+        display: block;
+      }
+    }
+    .good-price {
+      margin: 15px 0;
+      height: 30px;
+      text-align: center;
+      line-height: 30px;
+      color: #d44d44;
+      font-family: Arial;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .good-title {
+      line-height: 1.2;
+      font-size: 16px;
+      color: #424242;
+      margin: 0 auto;
+      padding: 0 14px;
+      text-align: center;
+      overflow: hidden;
+    }
+    h3 {
+      text-align: center;
+      line-height: 1.2;
+      font-size: 12px;
+      color: #d0d0d0;
+      padding: 5px;
+    }
+    .pdt-3 {
+      padding-top: 5px;
+      width: 200px;
+      margin: auto;
+    }
+
+  }
+</style>

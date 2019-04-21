@@ -1,0 +1,80 @@
+.login-container {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  text-align: center;
+  background: #141a48 url(../../assets/bg4.jpg) no-repeat;
+  background-size: cover;
+  overflow: hidden;
+}
+
+#loginThree {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.login-form {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -230px 0 0 -180px;
+  width: 360px;
+  height: 340px;
+  padding: 25px;
+  box-shadow: 0 0 100px rgba(0, 0, 0, .08);
+  background-color: #fff;
+  border-radius: 4px;
+  z-index: 3;
+}
+.login-form .login-logo {
+  text-align: center;
+  height: 40px;
+  line-height: 40px;
+  cursor: pointer;
+  margin-bottom: 24px;
+}
+.login-form .login-logo > img {
+  width: 40px;
+  margin-right: 8px;
+}
+
+.login-form .login-logo > span {
+  vertical-align: text-bottom;
+  font-size: 16px;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+.login-account {
+  color: #999;
+  text-align: center;
+  margin-top: -15px;
+}
+
+.login-account span {
+  font-size: 12px;
+}
+
+.login-account span :first-child {
+  margin-right: 16px;
+}
+
+.form-fade-enter-active, .form-fade-leave-active {
+  transition: all 1s;
+}
+
+.form-fade-enter, .form-fade-leave-active {
+  transform: translate3d(0, -50px, 0);
+  opacity: 0;
+}
+
+#wait {
+  text-align: left;
+  color: #999;
+  margin: 0
+}
