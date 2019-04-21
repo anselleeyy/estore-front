@@ -38,9 +38,6 @@
                     @btnClick="addCart(item.id, item.price, item.title, item.picUrl)"
                     classStyle="main-btn"
                     style="width: 145px;height: 50px;line-height: 48px"></y-button>
-          <y-button text="现在购买"
-                    @btnClick="checkout(item.id)"
-                    style="width: 145px; height: 50px; line-height: 48px; margin-left: 10px"></y-button>
         </div>
       </div>
     </div>
@@ -85,7 +82,7 @@ import YButton from '../../components/YButton'
 import YShelf from '../../components/shelf'
 import BuyNum from '../../components/buynum'
 import { getStore } from '../../utils/storage'
-import { itemInfo } from '../../api'
+import { itemInfo, addCart } from '../../api'
 
 export default {
   name: 'goodsDetail',
@@ -116,6 +113,33 @@ export default {
     },
     editNum (num) {
       this.productNum = num
+    },
+    addCart (id, price, name, img) {
+      if (!this.showMoveImg) {
+        if (this.login) { // 登录了 直接存在用户名下
+          addCart(
+            {
+              userId: parseInt(getStore('userId')),
+              itemId: id,
+              number: 1
+            }).then(res => {
+            // 并不重新请求数据
+            this.ADD_CART({itemId: id, price: price, title: name, picUrl: img})
+          })
+        } else { // 未登录 vuex
+          this.ADD_CART({itemId: id, price: price, title: name, picUrl: img})
+        }
+        // 加入购物车动画x`
+        let dom = event.target
+        // 获取点击的坐标
+        let elLeft = dom.getBoundingClientRect().left + (dom.offsetWidth / 2)
+        let elTop = dom.getBoundingClientRect().top + (dom.offsetHeight / 2)
+        // 需要触发
+        this.ADD_ANIMATION({moveShow: true, elLeft: elLeft, elTop: elTop, img: img})
+        if (!this.showCart) {
+          this.SHOW_CART({showCart: true})
+        }
+      }
     }
   },
   components: {

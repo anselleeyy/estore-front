@@ -1,69 +1,30 @@
 <template>
   <div>
-    <y-shelf title="账户资料">
+    <y-shelf title="修改密码">
       <div slot="content">
         <div class="avatar-box">
-          <div class=img-box><img :src="userInfo.info.avatar" alt=""></div>
-          <div class="r-box">
-            <h3 style="margin-left: 13px;">修改头像</h3>
-            <y-button text="上传头像" classStyle="main-btn" style="margin: 0;" @btnClick="editAvatar()"></y-button>
-          </div>
+          <!--<div class=img-box><img :src="userInfo.info.avatar" alt=""></div>-->
+          <!--<div class="r-box">-->
+            <!--<h3 style="margin-left: 13px;">修改密码</h3>-->
+            <!--&lt;!&ndash;<y-button text="上传头像" classStyle="main-btn" style="margin: 0;" @btnClick="editAvatar()"></y-button>&ndash;&gt;-->
+          <!--</div>-->
         </div>
-        <div class="edit-avatar" v-if="editAvatarShow">
-          <y-shelf title="设置头像">
-            <div slot="content" class="content">
-              <div class="edit-l">
-                <div style="width: 100px;height: 100px;border: 1px solid #ccc;margin-bottom: 20px;overflow: hidden;">
-                  <div class="show-preview"
-                       :style="{'width': previews.w + 'px','height': previews.h + 'px','overflow': 'hidden','zoom':option.zoom}">
-                    <div :style="previews.div">
-                      <img :src="option.img"
-                           :style="previews.img"
-                      >
-                    </div>
-                  </div>
-                </div>
-                <div style="padding: 10px 0 ">头像预览</div>
-                <div class="btn">
-                  <a href="javascript:;">选择文件</a>
-                  <input type="file" value="上传头像" @change="uploadImg($event)"></div>
-              </div>
-              <div class="edit-r">
-                <div>
-                  <div class="big" id="cropper-target" v-if="option.img">
-                    <vueCropper
-                      :img="option.img"
-                      @realTime="realTime"
-                      ref="cropper"
-                      :outputSize="example2.size"
-                      :outputType="example2.outPutType"
-                      :info="example2.info"
-                      :canScale="example2.canScale"
-                      :canMove="example2.canMove"
-                      :autoCrop="example2.autoCrop"
-                      :autoCropWidth="example2.width"
-                      :autoCropHeight="example2.height"
-                      :fixed="example2.fixed"
-                      :fixedNumber="example2.fixedNumber"
-                    ></vueCropper>
-                  </div>
-                </div>
-              </div>
-              <div class="bottom-btn pa">
-                <y-button style="width: 140px;height: 40px;line-height: 40px"
-                          text="取消"
-                          @btnClick="editAvatarShow=false">
-                </y-button>
-                <y-button style="width: 140px;height: 40px;line-height: 40px"
-                          text="确定"
-                          classStyle="main-btn">
-                          <!--@btnClick="cropper"-->
-                <!--&gt;-->
-                </y-button>
-              </div>
-            </div>
-          </y-shelf>
-        </div>
+        <el-form :model="updateForm" :rules="rules" label-width="80px" ref="updateForm" style="width: 350px; margin-left: 30px">
+          <el-form-item label="旧密码" prop="oldPassword">
+            <el-input type="password" v-model="updateForm.oldPassword" placeholder="请输入旧密码"></el-input>
+          </el-form-item>
+          <el-form-item label="新密码" prop="newPassword">
+            <el-input type="password" placeholder="请输入新密码" v-model="updateForm.newPassword"></el-input>
+          </el-form-item>
+          <el-form-item prop="repeat" label="再次输入">
+            <el-input type="password" placeholder="请再次输入新密码" v-model="updateForm.repeat"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" plain @click="update()" class="submit_btn">{{ updateTxt }}</el-button>
+            <el-button type="warning" plain class="submit_btn">重置</el-button>
+            <br>
+          </el-form-item>
+        </el-form>
       </div>
     </y-shelf>
   </div>
@@ -75,6 +36,7 @@ import YButton from '../../../components/YButton'
 import vueCropper from 'vue-cropper'
 import { getStore } from '../../../utils/storage'
 import { mapState, mapMutations } from 'vuex'
+import { updatePwd } from '../../../api'
 
 export default {
   name: 'information',
@@ -106,8 +68,25 @@ export default {
       },
       userId: '',
       token: '',
+      updateTxt: '立即修改',
       // 上传图片
-      imageUrl: 'http://10.11.124.102/mall/userInfo/avatar/admin/339a8f652dae8d85afdcbd6d369f4d2a.jpeg'
+      imageUrl: 'http://10.11.124.102/mall/userInfo/avatar/admin/339a8f652dae8d85afdcbd6d369f4d2a.jpeg',
+      updateForm: {
+        oldPassword: '',
+        newPassword: '',
+        repeat: ''
+      },
+      rules: {
+        oldPassword: [
+          { required: true, message: '请输入用户名', trigger: 'blur' }
+        ],
+        newPassword: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
+        ],
+        repeat: [
+          { required: true, message: '请再次密码', trigger: 'blur' }
+        ]
+      }
     }
   },
   computed: {
@@ -130,6 +109,29 @@ export default {
         type: 'error'
       })
     },
+    update () {
+      this.updateTxt = '修改中'
+      let oldPassword = this.updateForm.oldPassword
+      let newPassword = this.updateForm.newPassword
+      let repeat = this.updateForm.repeat
+      if (newPassword !== repeat) {
+        this.messageFail('二次密码不正确，请重新输入')
+        this.$refs['updateForm'].resetFields()
+      }
+      let params = {
+        oldPassword: oldPassword,
+        newPassword: newPassword
+      }
+      updatePwd(this.userId, params).then(res => {
+        if (res.code === 40006) {
+          this.messageSuccess(res.message)
+        } else {
+          this.messageFail(res.message)
+        }
+        this.updateTxt = '立即修改'
+        this.$refs['updateForm'].resetFields()
+      })
+    },
     editAvatar () {
       this.editAvatarShow = true
     },
@@ -149,28 +151,6 @@ export default {
         this.option.img = e.target.result
       }
     },
-    // cropper () {
-    //   this.message('上传中...')
-    //   if (this.option.img) {
-    //     this.$refs.cropper.getCropData((data) => {
-    //       this.imgSrc = data
-    //       upload({userId: this.userId, token: this.token, imgData: data}).then(res => {
-    //         if (res.success === true) {
-    //           let path = res.result
-    //           let info = this.userInfo
-    //           info.file = path
-    //           this.RECORD_USERINFO({info: info})
-    //           this.editAvatarShow = false
-    //           this.messageSuccess('上传成功')
-    //         } else {
-    //           this.messageFail(res.message)
-    //         }
-    //       })
-    //     })
-    //   } else {
-    //     this.messageFail('别玩我啊 先选照骗')
-    //   }
-    // },
     realTime (data) {
       this.previews = data
       let w = 100 / data.w
@@ -193,10 +173,10 @@ export default {
   @import "../../../assets/style/mixin";
 
   .avatar-box {
-    height: 124px;
+    height: 5px;
     display: flex;
     margin: 0 30px 30px;
-    border-bottom: #dadada solid 1px;
+    /*border-bottom: #dadada solid 1px;*/
     line-height: 30px;
     display: flex;
     align-items: center;

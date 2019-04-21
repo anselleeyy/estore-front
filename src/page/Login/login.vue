@@ -6,7 +6,7 @@
           <img src="/static/img/logo.png"> <span>欢迎登录 学子商城</span>
         </div>
         <el-form :model="loginForm" :rules="rules" ref="loginForm">
-          <el-form-item prop="username">
+          <el-form-item lable="用户名" prop="username">
             <el-input v-model="loginForm.username" placeholder="请输入用户名"></el-input>
           </el-form-item>
           <el-form-item prop="password">
@@ -20,19 +20,46 @@
           <el-form-item>
             <el-button type="primary" plain @click="submitForm('loginForm')" class="submit_btn">{{ loginTxt }}</el-button>
             <el-button type="warning" plain class="submit_btn">重置</el-button>
+            <br>
+            <span style="font-size: 12px">还没有注册？<a @click="turn_to_reg">立即注册</a></span>
           </el-form-item>
         </el-form>
-        <div class="login-account"></div>
       </div>
     </transition>
-    <div id="loginThree"></div>
+    <!--<div id="loginThree"></div>-->
+    <el-dialog :visible.sync="showReg" title="欢迎注册 学子商城" center width="40%">
+      <!--<div class="register-form">-->
+      <!--<div class="login-logo">-->
+      <!--<img src="/static/img/logo.png"> <span>欢迎注册 学子商城</span>-->
+      <!--</div>-->
+      <el-form :model="regForm" :rules="rules" ref="regForm" class="register-form" label-width="120px">
+        <el-form-item label="用户名" prop="username" >
+          <el-input v-model="regForm.username" placeholder="请输入用户名"></el-input>
+        </el-form-item>
+        <el-form-item prop="password" label="密码">
+          <el-input type="password" placeholder="密码" v-model="regForm.password"></el-input>
+        </el-form-item>
+        <el-form-item prop="email" label="邮箱">
+          <el-input v-model="regForm.email" placeholder="请输入邮箱"></el-input>
+        </el-form-item>
+        <el-form-item prop="phone" label="手机号">
+          <el-input v-model="regForm.phone" placeholder="请输入手机号"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" plain @click="toReg('regForm')" class="submit_btn">{{ regTxt }}</el-button>
+        <el-button type="warning" plain class="submit_btn">重置</el-button>
+        <br>
+      </div>
+      <!--</div>-->
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import THREE from '../../libs/three/three'
 import 'element-ui/lib/theme-chalk/index.css'
-import { login, geetest } from '../../api'
+import { login, geetest, register } from '../../api'
 import { setStore } from '../../utils/storage'
 require('../../../static/geetest/gt.js')
 let captcha
@@ -46,6 +73,12 @@ export default {
         password: '',
         errMsg: ''
       },
+      regForm: {
+        username: '',
+        password: '',
+        email: '',
+        phone: ''
+      },
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
@@ -55,7 +88,9 @@ export default {
         ]
       },
       showLogin: false,
+      showReg: false,
       loginTxt: '登录',
+      regTxt: '注册',
       statusKey: ''
     }
   },
@@ -142,6 +177,21 @@ export default {
       this.$notify.info({
         title: t,
         message: m
+      })
+    },
+    turn_to_reg () {
+      this.regTxt = '注册'
+      // this.showLogin = false
+      this.showReg = true
+    },
+    toReg () {
+      console.log(this.regForm)
+      this.regTxt = '注册中'
+      register(this.regForm).then(res => {
+        if (res.code === 40001) {
+          this.messageSuccess('注册成功！')
+          this.showReg = false
+        }
       })
     },
     init_3D () {

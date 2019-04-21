@@ -24,12 +24,17 @@
   left: 50%;
   margin: -230px 0 0 -180px;
   width: 360px;
-  height: 340px;
+  height: 360px;
   padding: 25px;
   box-shadow: 0 0 100px rgba(0, 0, 0, .08);
   background-color: #fff;
   border-radius: 4px;
   z-index: 3;
+}
+.register-form {
+  margin: auto;
+  width: 370px;
+  height: 225px;
 }
 .login-form .login-logo {
   text-align: center;

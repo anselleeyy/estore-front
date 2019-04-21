@@ -29,9 +29,10 @@
 </template>
 <script>
 import YButton from './YButton'
-import { addCart } from '../api/index'
+import { addCart, updateHot } from '../api/index'
 import { mapMutations, mapState } from 'vuex'
 import { getStore } from '../utils/storage'
+
 export default {
   props: {
     msg: {
@@ -47,6 +48,7 @@ export default {
   methods: {
     ...mapMutations([ 'ADD_CART', 'ADD_ANIMATION', 'SHOW_CART' ]),
     openProduct (id) {
+      updateHot(id)
       window.open('//' + window.location.host + '/#/goodsDetail?itemId=' + id)
     },
     addCart (id, price, name, img) {

@@ -43,3 +43,15 @@ export const getCartList = (userId, params) => {
 export const addressList = (userId, params) => {
   return api.fetchGet('/cart/address/' + userId, params)
 }
+
+export const updateHot = (id, params) => {
+  return api.fetchPut('/item/updateHot/' + id)
+}
+
+export const register = (params) => {
+  return api.fetchPost('/user/register', params)
+}
+
+export const updatePwd = (id, params) => {
+  return api.fetchPut('/user/updatePassword/' + id, params)
+}

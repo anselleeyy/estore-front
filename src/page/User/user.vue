@@ -40,7 +40,7 @@ export default {
       title: '我的订单',
       nav: [
         { name: '我的订单', path: 'orderCenter' },
-        { name: '账户资料', path: 'information' },
+        { name: '修改密码', path: 'information' },
         { name: '收货地址', path: 'addressList' }
       ],
       editAvatar: true
