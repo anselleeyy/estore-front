@@ -9,7 +9,7 @@
           <input type="number" class="input" placeholder="价格" v-model="min">
           <span style="margin: 0 5px"> - </span>
           <input type="number" placeholder="价格" v-model="max">
-          <y-button text="确定" classStyle="main-btn" @btnClick="reset" style="margin-left: 10px;"></y-button>
+          <y-button text="确定" classStyle="main-btn" @btnClick="_getGoodsByPrice" style="margin-left: 10px;"></y-button>
         </div>
       </div>
     </div>
@@ -66,7 +66,7 @@
 import mallGoods from '../../components/mallGoods'
 import YButton from '../../components/YButton'
 import YShelf from '../../components/shelf'
-import { getAllItem } from '../../api'
+import { getAllItem, getItemByPrice } from '../../api'
 
 export default {
   name: 'goods',
@@ -83,43 +83,58 @@ export default {
       windowHeight: null,
       windowWidth: null,
       recommendPanel: [],
-      sort: '',
+      sort: 0,
       currentPage: 1,
       total: 0,
-      pageSize: 12
+      pageSize: 12,
+      limit: false
     }
   },
   methods: {
     handleSizeChange (val) {
       this.pageSize = val
-      this._getAllGoods()
       this.loading = true
+      this._getAllGoods()
     },
     handleCurrentChange (val) {
       this.loading = true
       this.currentPage = val
-      this._getAllGoods()
+      if (this.limit) {
+        this._getGoodsByPrice()
+      } else {
+        this._getAllGoods()
+      }
       window.scrollTo(0, 0)
     },
-    _getAllGoods () {
-      // let cid = this.$route.query.cid
-      // if (this.min !== '') {
-      //   this.min = Math.floor(this.min)
-      // }
-      // if (this.max !== '') {
-      //   this.max = Math.floor(this.max)
-      // }
+    _getAllGoods (v) {
       let params = {
-        // params: {
         currentPage: this.currentPage,
         pageSize: this.pageSize
-        // sort: this.sort,
-        // priceGt: this.min,
-        // priceLte: this.max,
-        // cid: cid
-        // }
       }
-      getAllItem(params).then(res => {
+      getAllItem(this.sort, params).then(res => {
+        if (res.code === 10001) {
+          this.total = res.result.total
+          this.goods = res.result.list
+          this.noResult = false
+          if (this.total === 0) {
+            this.noResult = true
+          }
+          this.error = false
+        } else {
+          this.error = true
+        }
+        this.loading = false
+      })
+    },
+    _getGoodsByPrice () {
+      this.sortType = 4
+      this.limit = true
+      let params = {
+        currentPage: this.currentPage,
+        pageSize: this.pageSize
+      }
+      let limits = this.min + '|' + this.max
+      getItemByPrice(limits, params).then(res => {
         if (res.code === 10001) {
           this.total = res.result.total
           this.goods = res.result.list
@@ -136,14 +151,16 @@ export default {
     },
     // 默认排序
     reset () {
+      this.limit = false
       this.sortType = 1
-      this.sort = ''
+      this.sort = 0
       this.currentPage = 1
       this.loading = true
       this._getAllGoods()
     },
     // 价格排序
     sortByPrice (v) {
+      this.limit = false
       v === 1 ? this.sortType = 2 : this.sortType = 3
       this.sort = v
       this.currentPage = 1
@@ -156,10 +173,6 @@ export default {
     this.windowWidth = window.innerWidth
     this._getAllGoods()
     this.loading = false
-    // recommend().then(res => {
-    //   let data = res.result
-    //   this.recommendPanel = data[0]
-    // })
   },
   components: {
     mallGoods,

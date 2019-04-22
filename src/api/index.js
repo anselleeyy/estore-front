@@ -24,8 +24,8 @@ export const itemInfo = (id, params) => {
   return api.fetchGet('/item/detail/' + id, params)
 }
 
-export const getAllItem = (params) => {
-  return api.fetchGet('/item/all', params)
+export const getAllItem = (type, params) => {
+  return api.fetchGet('/item/all/' + type, params)
 }
 
 export const navList = (params) => {
@@ -54,4 +54,8 @@ export const register = (params) => {
 
 export const updatePwd = (id, params) => {
   return api.fetchPut('/user/updatePassword/' + id, params)
+}
+
+export const getItemByPrice = (limit, params) => {
+  return api.fetchGet('/item/all/price/' + limit, params)
 }
