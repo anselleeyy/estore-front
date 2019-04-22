@@ -1,5 +1,5 @@
 import axios from 'axios'
-axios.defaults.baseURL = 'http://127.0.0.1:15000'
+axios.defaults.baseURL = 'http://10.11.124.102:15000'
 axios.defaults.headers.post['Content-Type'] = 'application/x-www=form-urlencoded'
 // axios.defaults.headers.put['Content-Type'] = 'application/x-www=form-urlencoded'
 // axios.defaults.baseURL = 'http://localhost:10073'

@@ -33,6 +33,9 @@
           <span class="params-name">数量</span>
           <buy-num @edit-num="editNum" :limit="Number(item.itemDetail.limitNum)"></buy-num>
         </div>
+        <div class="" style="padding: 0px 0 8px 10px;">
+          <span class="params-name">库存：<span class="item-num-limit">{{Number(item.itemDetail.limitNum)}}</span></span>
+        </div>
         <div class="buy">
           <y-button text="加入购物车"
                     @btnClick="addCart(item.id, item.price, item.title, item.picUrl)"
