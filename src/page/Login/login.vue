@@ -130,15 +130,16 @@ export default {
         statusKey: this.statusKey
       }
       login(params).then(res => {
-        if (res.result.state === 1) {
+        if (res.code === 40003) {
           setStore('token', res.result.token)
           setStore('userId', res.result.user.id)
+          this.messageSuccess('登录成功')
           this.$router.push({
             path: '/'
           })
         } else {
           this.loginTxt = '登录'
-          this.message(res.result.message)
+          this.message(res.message)
           captcha.reset()
           return false
         }
