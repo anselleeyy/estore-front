@@ -9,7 +9,7 @@
         </div>
         <div v-if="addList.length">
           <div class="address-item" v-for="(item,i) in addList" :key="i">
-            <div class="name">{{ item.userName }}</div>
+            <div class="name">{{ item.passName }}</div>
             <div class="address-msg">{{ item.address }}</div>
             <div class="telephone">{{ item.tel }}</div>
             <div class="defalut">
@@ -23,7 +23,7 @@
                 <el-button type="primary" icon="el-icon-edit" size="small"  @click="update(item)" circle></el-button>
               </el-tooltip>
               <el-tooltip effect="dark" content="删除" placement="top-start">
-                <el-button type="danger" icon="el-icon-delete" size="small" :data-id="item.addressId" @click="del(item.addressId,i)" circle></el-button>
+                <el-button type="danger" icon="el-icon-delete" size="small" :data-id="item.id" @click="del(item)" circle></el-button>
               </el-tooltip>
             </div>
           </div>
@@ -36,10 +36,10 @@
       </div>
     </y-shelf>
     <y-popup :open="popupOpen" @close='popupOpen = false' :title="popupTitle">
-      <div slot="content" class="md" :data-id="msg.addressId">
+      <div slot="content" class="md" :data-id="msg.id">
         <div>
           <!--<input type="text" placeholder="收货人姓名" v-model="msg.userName">-->
-          <el-input placeholder="收货人姓名" v-model="msg.userName" clearable></el-input>
+          <el-input placeholder="收货人姓名" v-model="msg.passName" clearable></el-input>
         </div>
         <div>
           <!--<input type="number" placeholder="手机号码" v-model="msg.tel">-->
@@ -50,21 +50,12 @@
           <el-input placeholder="收货地址" v-model="msg.address" clearable></el-input>
         </div>
         <div>
-          <el-checkbox class="auto-login" v-model="msg.isDefault">设为默认</el-checkbox>
+          <el-checkbox class="auto-login" v-model="msg.isDefault" :disabled="isDisabled">设为默认</el-checkbox>
         </div>
         <y-button text='保存'
                   class="btn"
                   :classStyle="btnHighlight?'main-btn':'disabled-btn'"
-                  @btnClick="
-                  save(
-                    {
-                      userId: userId,
-                      addressId: msg.addressId,
-                      userName: msg.userName,
-                      tel: msg.tel,
-                      address: msg.address,
-                      isDefault: msg.isDefault
-                     })">
+                  @btnClick="save">
         </y-button>
       </div>
     </y-popup>
@@ -76,46 +67,32 @@ import YButton from '../../../components/YButton'
 import YShelf from '../../../components/shelf'
 import YPopup from '../../../components/popup'
 import { getStore } from '../../../utils/storage'
+import { getAllAddress, deleteAddress, updateAddress, updateDefaultAddress, addAddress } from '../../../api'
 
 export default {
   name: 'addressList',
   data () {
     return {
-      addList: [
-        {
-          addressId: 486,
-          isDefault: true,
-          address: '江苏省南京市江宁区弘景大道3601号',
-          tel: '13877776666',
-          userId: 2,
-          userName: 'ping-pong'
-        },
-        {
-          addressId: 488,
-          isDefault: false,
-          address: '江苏省南京市雨花台区铁心桥街道软件谷科创城 C2 14楼',
-          tel: '13877776666',
-          userId: 2,
-          userName: '李先生'
-        }
-      ],
+      addList: [],
       popupOpen: false,
       popupTitle: '管理收货地址',
       msg: {
-        addressId: '',
-        userName: '',
+        id: '',
+        // userName: '',
         tel: '',
         address: '',
-        isDefault: false
+        isDefault: false,
+        passName: ''
       },
       userId: '',
-      isDisabled: false
+      isDisabled: false,
+      isModify: false
     }
   },
   computed: {
     btnHighlight () {
       let msg = this.msg
-      return msg.userName && msg.tel && msg.address
+      return msg.passName && msg.tel && msg.address
     }
   },
   methods: {
@@ -125,33 +102,93 @@ export default {
       })
     },
     // 保存一个新地址
-    save (p) {
+    save () {
       this.popupOpen = false
-      console.log(JSON.stringify(p))
+      if (this.isModify) {
+        this.modify()
+      } else {
+        this.add()
+      }
     },
     // 修改或新增
     update (item) {
       this.popupOpen = true
       if (item) {
         this.popupTitle = '管理收货地址'
-        this.msg.userName = item.userName
+        this.msg.passName = item.passName
         this.msg.tel = item.tel
         this.msg.address = item.address
-        this.msg.isDefault = item.isDefault
-        this.msg.addressId = item.addressId
+        this.msg.isDefault = !!item.isDefault
+        this.isDisabled = this.msg.isDefault === true
+        this.msg.id = item.id
+        this.isModify = true
       } else {
         this.popupTitle = '新增收货地址'
-        this.msg.userName = ''
+        this.msg.passName = ''
         this.msg.tel = ''
         this.msg.address = ''
         this.msg.isDefault = false
-        this.msg.addressId = ''
+        this.msg.id = ''
+        this.isModify = false
+      }
+    },
+    async add () {
+      this.msg.isDefault = this.msg.isDefault ? 1 : 0
+      this.msg.userId = this.userId
+      let res = await addAddress(this.msg)
+      if (res.code === 60002) {
+        this.$message.success('添加地址成功')
+        this._addressList()
+      } else {
+        this.$message.error('添加地址失败')
+        this._addressList()
+      }
+    },
+    async modify () {
+      this.msg.isDefault = this.msg.isDefault ? 1 : 0
+      let res = await updateAddress(this.msg)
+      if (res.code === 60004) {
+        this.$message.success('地址更新成功')
+        this._addressList()
+      } else {
+        this.$message.error('地址更新失败')
+        this._addressList()
+      }
+    },
+    async _addressList () {
+      let res = await getAllAddress(this.userId)
+      this.addList = res.result
+    },
+    async del (item) {
+      let id = item.id
+      let isDefault = item.isDefault
+      if (isDefault) {
+        this.$message.warning('无法删除默认地址！')
+        return
+      }
+      let res = await deleteAddress(id)
+      if (res.code === 60006) {
+        this.$message.success('地址删除成功')
+        this._addressList()
+      } else {
+        this.$message.error('地址删除失败')
+        this._addressList()
+      }
+    },
+    async changeDef (item) {
+      let res = await updateDefaultAddress(item.id)
+      if (res.code === 60004) {
+        this.$message.success('默认地址更新成功')
+        this._addressList()
+      } else {
+        this.$message.error('默认地址更新失败')
+        this._addressList()
       }
     }
   },
   created () {
     this.userId = getStore('userId')
-    // this._addressList()
+    this._addressList()
   },
   components: {
     YButton,

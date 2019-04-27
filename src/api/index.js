@@ -59,3 +59,23 @@ export const updatePwd = (id, params) => {
 export const getItemByPrice = (limit, params) => {
   return api.fetchGet('/item/all/price/' + limit, params)
 }
+
+export const getAllAddress = (id) => {
+  return api.fetchGet('/address/' + id)
+}
+
+export const deleteAddress = (id) => {
+  return api.fetchDel('/address/delete/' + id)
+}
+
+export const updateAddress = (params) => {
+  return api.fetchPut('/address/update', params)
+}
+
+export const updateDefaultAddress = (id) => {
+  return api.fetchPut('/address/update/' + id)
+}
+
+export const addAddress = (params) => {
+  return api.fetchPost('/address/add', params)
+}
