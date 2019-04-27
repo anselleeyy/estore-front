@@ -40,7 +40,7 @@
                         <router-link to="/user/orderCenter">我的订单</router-link>
                       </li>
                       <li>
-                        <router-link to="/user/information">账号资料</router-link>
+                        <router-link to="/user/information">修改密码</router-link>
                       </li>
                       <li>
                         <router-link to="/user/addressList">收货地址</router-link>
