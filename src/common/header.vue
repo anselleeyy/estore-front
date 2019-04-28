@@ -284,7 +284,7 @@ export default {
           // ,onClose: this.$router.go({path: '/home'})
         })
         this.sleep(1500).then(() => {
-          this.$router.go({path: '/home'})
+          this.$router.push({path: '/home'})
         })
       } else {
         this.$message.error('退出失败，请稍后重试')
