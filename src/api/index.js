@@ -79,3 +79,7 @@ export const updateDefaultAddress = (id) => {
 export const addAddress = (params) => {
   return api.fetchPost('/address/add', params)
 }
+
+export const delToken = (params) => {
+  return api.fetchDel('/user/logout', params)
+}

@@ -46,8 +46,7 @@
                         <router-link to="/user/addressList">收货地址</router-link>
                       </li>
                       <li>
-                        <a href="javascript:;">退出</a>
-                        <!--@click="_logout"-->
+                        <a href="javascript:;" @click="_logout">退出</a>
                       </li>
                     </ul>
                   </div>
@@ -136,8 +135,8 @@
 import 'element-ui/lib/theme-chalk/index.css'
 import YButton from '../components/YButton'
 import { mapMutations, mapState } from 'vuex'
-import { getStore } from '../utils/storage'
-import { navList } from '../api'
+import { getStore, setStore } from '../utils/storage'
+import { navList, delToken } from '../api'
 
 export default {
   components: {
@@ -268,6 +267,28 @@ export default {
       navList().then(res => {
         this.navList = res
       })
+    },
+    sleep (ms) {
+      return new Promise(resolve => setTimeout(resolve, ms))
+    },
+    // 退出登录
+    async _logout () {
+      await setStore('token', '')
+      let data = {
+        'token': this.token
+      }
+      let res = await delToken(data)
+      if (res.code === 40008) {
+        this.$message.success({
+          message: '退出成功'
+          // ,onClose: this.$router.go({path: '/home'})
+        })
+        this.sleep(1500).then(() => {
+          this.$router.go({path: '/home'})
+        })
+      } else {
+        this.$message.error('退出失败，请稍后重试')
+      }
     }
   },
   mounted () {
