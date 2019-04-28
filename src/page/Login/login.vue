@@ -32,7 +32,7 @@
       <!--<div class="login-logo">-->
       <!--<img src="/static/img/logo.png"> <span>欢迎注册 学子商城</span>-->
       <!--</div>-->
-      <el-form :model="regForm" :rules="rules" ref="regForm" class="register-form" label-width="120px">
+      <el-form :model="regForm" :rules="res_rules" ref="regForm" class="register-form" label-width="120px">
         <el-form-item label="用户名" prop="username" >
           <el-input v-model="regForm.username" placeholder="请输入用户名"></el-input>
         </el-form-item>
@@ -80,6 +80,14 @@ export default {
         phone: ''
       },
       rules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
+        ]
+      },
+      res_rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
         ],
@@ -185,13 +193,23 @@ export default {
       // this.showLogin = false
       this.showReg = true
     },
-    toReg () {
-      console.log(this.regForm)
+    async toReg () {
       this.regTxt = '注册中'
-      register(this.regForm).then(res => {
+      if (!this.regForm.username || !this.regForm.password) {
+        // this.ruleForm.errMsg = '账号或者密码不能为空!'
+        this.message('用户名或者密码不能为空!')
+        this.regTxt = '注册'
+        return
+      }
+      await register(this.regForm).then(res => {
         if (res.code === 40001) {
           this.messageSuccess('注册成功！')
+          this.regTxt = '注册'
+          this.$refs['regForm'].resetFields()
           this.showReg = false
+        } else {
+          this.message('注册失败，请稍后重试')
+          this.regTxt = '注册'
         }
       })
     },
