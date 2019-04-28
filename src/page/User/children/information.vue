@@ -78,7 +78,7 @@ export default {
       },
       rules: {
         oldPassword: [
-          { required: true, message: '请输入用户名', trigger: 'blur' }
+          { required: true, message: '请输入旧密码', trigger: 'blur' }
         ],
         newPassword: [
           { required: true, message: '请输入密码', trigger: 'blur' }
@@ -117,6 +117,8 @@ export default {
       if (newPassword !== repeat) {
         this.messageFail('二次密码不正确，请重新输入')
         this.$refs['updateForm'].resetFields()
+        this.updateTxt = '立即修改'
+        return
       }
       let params = {
         oldPassword: oldPassword,
@@ -126,7 +128,7 @@ export default {
         if (res.code === 40006) {
           this.messageSuccess(res.message)
         } else {
-          this.messageFail(res.message)
+          this.messageFail('旧密码不正确，请重试')
         }
         this.updateTxt = '立即修改'
         this.$refs['updateForm'].resetFields()
