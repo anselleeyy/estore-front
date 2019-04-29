@@ -136,7 +136,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import YButton from '../components/YButton'
 import { mapMutations, mapState } from 'vuex'
 import { getStore, setStore } from '../utils/storage'
-import { navList, delToken } from '../api'
+import { navList, delToken, getCartList } from '../api'
 
 export default {
   components: {
@@ -289,16 +289,23 @@ export default {
       } else {
         this.$message.error('退出失败，请稍后重试')
       }
+    },
+    async _getCartList () {
+      let userId = getStore('userId')
+      await getCartList(userId).then(res => {
+        console.log(res)
+        console.log(getStore('buyCart'))
+      })
     }
   },
   mounted () {
     this._getNavList()
     this.token = getStore('token')
-    // if (this.login) {
-    //   this._getCartList()
-    // } else {
-    this.INIT_BUYCART()
-    // }
+    if (this.login) {
+      this._getCartList()
+    } else {
+      this.INIT_BUYCART()
+    }
     this.navFixed()
     this.getPage()
     window.addEventListener('scroll', this.navFixed)
