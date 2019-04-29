@@ -21,7 +21,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" plain @click="update()" class="submit_btn">{{ updateTxt }}</el-button>
-            <el-button type="warning" plain class="submit_btn">重置</el-button>
+            <el-button type="warning" plain @click="reset" class="submit_btn">重置</el-button>
             <br>
           </el-form-item>
         </el-form>
@@ -109,7 +109,7 @@ export default {
         type: 'error'
       })
     },
-    update () {
+    async update () {
       this.updateTxt = '修改中'
       let oldPassword = this.updateForm.oldPassword
       let newPassword = this.updateForm.newPassword
@@ -120,11 +120,17 @@ export default {
         this.updateTxt = '立即修改'
         return
       }
+      if (newPassword === '') {
+        this.messageFail('新密码不允许为空，请重新输入')
+        this.$refs['updateForm'].resetFields()
+        this.updateTxt = '立即修改'
+        return
+      }
       let params = {
         oldPassword: oldPassword,
         newPassword: newPassword
       }
-      updatePwd(this.userId, params).then(res => {
+      await updatePwd(this.userId, params).then(res => {
         if (res.code === 40006) {
           this.messageSuccess(res.message)
         } else {
@@ -133,6 +139,9 @@ export default {
         this.updateTxt = '立即修改'
         this.$refs['updateForm'].resetFields()
       })
+    },
+    reset () {
+      this.$refs['updateForm'].resetFields()
     },
     editAvatar () {
       this.editAvatarShow = true
