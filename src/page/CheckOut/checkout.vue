@@ -11,21 +11,23 @@
             <li v-for="(item,i) in addList"
                 :key="i"
                 class="address pr"
-                :class="{checked:addressId === item.addressId}"
-                @click="chooseAddress(item.addressId, item.passName, item.tel, item.address)">
-           <span v-if="addressId === item.addressId" class="pa">
+                :class="{checked:msg.addressId === item.id}"
+                @click="chooseAddress(item.id, item.passName, item.tel, item.address)">
+           <span v-if="msg.addressId === item.id" class="pa">
+             <svg viewBox="0 0 1473 1024" width="17.34375" height="12">
+             <path
+               d="M1388.020 57.589c-15.543-15.787-37.146-25.569-61.033-25.569s-45.491 9.782-61.023 25.558l-716.054 723.618-370.578-374.571c-15.551-15.769-37.151-25.537-61.033-25.537s-45.482 9.768-61.024 25.527c-15.661 15.865-25.327 37.661-25.327 61.715 0 24.053 9.667 45.849 25.327 61.715l431.659 436.343c15.523 15.814 37.124 25.615 61.014 25.615s45.491-9.802 61.001-25.602l777.069-785.403c15.624-15.868 25.271-37.66 25.271-61.705s-9.647-45.837-25.282-61.717M1388.020 57.589z"
+               fill="#6A8FE5" p-id="1025">
+               </path>
+             </svg>
              </span>
               <p>收货人: {{ item.passName }} {{ item.isDefault ? '(默认地址)' : '' }}</p>
               <p class="street-name ellipsis">收货地址: {{ item.address }}</p>
               <p>手机号码: {{item.tel}}</p>
-              <div class="operation-section">
-                <span class="update-btn" style="font-size:12px" @click="update(item)">修改</span>
-                <span class="delete-btn" style="font-size:12px" :data-id="item.addressId" @click="del(item.addressId)">删除</span>
-              </div>
-            </li>
-
-            <li class="add-address-item" @click="update()">
-              <p>使用新地址</p>
+<!--              <div class="operation-section">-->
+<!--                <span class="update-btn" style="font-size:12px" @click="update(item)">修改</span>-->
+<!--                <span class="delete-btn" style="font-size:12px" :data-id="item.addressId" @click="del(item.addressId)">删除</span>-->
+<!--              </div>-->
             </li>
           </ul>
         </div>
@@ -93,8 +95,8 @@
                             :classStyle="submit?'disabled-btn':'main-btn'"
                             style="margin: 0;width: 130px;height: 50px;line-height: 50px;font-size: 16px"
                             :text="submitOrder"
+                            @btnClick="_submitOrder"
                             >
-                    <!--@btnClick="_submitOrder"-->
                   </y-button>
                 </div>
               </div>
@@ -102,27 +104,6 @@
           </div>
         </div>
       </y-shelf>
-      <y-popup :open="popupOpen" @close='popupOpen=false' :title="popupTitle">
-        <div slot="content" class="md" :data-id="msg.addressId">
-          <div>
-            <input type="text" placeholder="收货人姓名" v-model="msg.userName">
-          </div>
-          <div>
-            <input type="number" placeholder="手机号码" v-model="msg.tel">
-          </div>
-          <div>
-            <input type="text" placeholder="收货地址" v-model="msg.streetName">
-          </div>
-          <div>
-            <el-checkbox class="auto-login" v-model="msg.isDefault">设为默认</el-checkbox>
-          </div>
-          <y-button text='保存'
-                    class="btn"
-                    :classStyle="btnHighlight?'main-btn':'disabled-btn'"
-                    @btnClick="save({userId:userId,addressId:msg.addressId,userName:msg.userName,tel:msg.tel,streetName:msg.streetName,isDefault:msg.isDefault})">
-          </y-button>
-        </div>
-      </y-popup>
     </div>
     <y-footer></y-footer>
   </div>
@@ -135,22 +116,13 @@ import YButton from '../../components/YButton'
 import YPopup from '../../components/popup'
 import YShelf from '../../components/shelf'
 import { getStore } from '../../utils/storage'
-import { getCartList, addressList } from '../../api'
+import { getCartList, getAllAddress } from '../../api'
 
 export default {
   name: 'checkout',
   data () {
     return {
-      cartList: [
-        {
-          itemId: 9787111526285,
-          title: 'Java 核心思想',
-          imgUrl: 'http://10.11.124.102/mall/img/goods/9787111213826/collect.jpg',
-          num: 2,
-          price: 86.4,
-          checked: '1'
-        }
-      ],
+      cartList: [],
       addList: [],
       addressId: '0',
       popupOpen: false,
@@ -195,24 +167,30 @@ export default {
     },
     // 选择地址
     chooseAddress (addressId, userName, tel, streetName) {
-      this.addressId = addressId
-      this.userName = userName
-      this.tel = tel
-      this.streetName = streetName
+      this.msg.addressId = addressId
+      this.msg.userName = userName
+      this.msg.tel = tel
+      this.msg.streetName = streetName
     },
-    _addressList () {
-      addressList(this.userId).then(res => {
-        let data = res
+    async _addressList () {
+      await getAllAddress(this.userId).then(res => {
+        let data = res.result
         if (data.length) {
           this.addList = data
-          this.addressId = data[0].id || '1'
-          this.userName = data[0].passName
-          this.tel = data[0].tel
-          this.streetName = data[0].address
+          this.msg.addressId = data[0].id || '1'
+          this.msg.userName = data[0].passName
+          this.msg.tel = data[0].tel
+          this.msg.streetName = data[0].address
+          this.msg.isDefault = data[0].isDefault === 1
         } else {
           this.addList = []
         }
       })
+    },
+    _submitOrder () {
+      console.log(this.msg)
+      console.log(this.cartList)
+      console.log(this.checkPrice)
     },
     // 付款
     payment (orderId) {
@@ -232,18 +210,7 @@ export default {
   },
   created () {
     this.userId = getStore('userId')
-    console.log(this.userId)
-    // let query = this.$route.query
-    // this._getCartList()
-    // if (query.productId && query.num) {
-    //   this.productId = query.productId
-    //   this.num = query.num
-    //   this._productDet(this.productId)
-    // } else {
-    //   this._getCartList()
-    // }
     this.cartList = JSON.parse(getStore('buyCart'))
-    console.log(this.cartList)
     this._addressList()
   },
   components: {
