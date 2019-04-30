@@ -208,7 +208,7 @@ export default {
           this.$refs['regForm'].resetFields()
           this.showReg = false
         } else {
-          this.message('注册失败，请稍后重试')
+          this.message('注册失败，用户名已存在，请重试！')
           this.regTxt = '注册'
         }
       })
