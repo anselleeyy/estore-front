@@ -105,7 +105,7 @@ export default {
     ...mapMutations([ 'ADD_CART', 'ADD_ANIMATION' ]),
     _itemInfo (itemId) {
       itemInfo(itemId).then(res => {
-        let result = res
+        let result = res.result
         console.log('info: ' + result)
         this.item = result
         this.small = result.itemDetail.smallPicList
@@ -127,10 +127,12 @@ export default {
               number: 1
             }).then(res => {
             // 并不重新请求数据
-            this.ADD_CART({itemId: id, price: price, title: name, picUrl: img})
+            if (res.code === 20001) {
+              this.ADD_CART({ itemId: id, price: price, title: name, picUrl: img, isOnline: true })
+            }
           })
         } else { // 未登录 vuex
-          this.ADD_CART({itemId: id, price: price, title: name, picUrl: img})
+          this.ADD_CART({ itemId: id, price: price, title: name, picUrl: img, isOnline: false })
         }
         // 加入购物车动画x`
         let dom = event.target

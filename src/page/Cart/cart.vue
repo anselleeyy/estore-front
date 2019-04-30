@@ -54,7 +54,6 @@
                                    display: flex;
                                    align-items: center;
                                    justify-content: center;"
-                                 :limit="20"
                                  @edit-num="EditNum"
                         >
                         </buy-num>
@@ -76,7 +75,7 @@
                     <span @click="editCheckAll">全选</span>
                   </div>
                   <!--<div class="delete-choose-goods" @click="delChecked">删除选中的商品</div>-->
-                  <div class="delete-choose-goods">删除选中的商品</div>
+<!--                  <div class="delete-choose-goods" @click="delItem(item.itemId)">删除选中的商品</div>-->
                 </div>
               </div>
               <div class="shipping">
@@ -122,6 +121,7 @@ import YFooter from '../../common/footer'
 import BuyNum from '../../components/buynum'
 import { mapState, mapMutations } from 'vuex'
 import { getStore } from '../../utils/storage'
+import { deleteCart } from '../../api'
 
 export default {
   name: 'cart',
@@ -133,7 +133,7 @@ export default {
     }
   },
   computed: {
-    ...mapState([ 'cartList' ]),
+    ...mapState([ 'cartList', 'login' ]),
     // 是否全选
     checkAllFlag () {
       return this.checkedCount === this.cartList.length
@@ -184,6 +184,18 @@ export default {
     },
     goodsDetails (id) {
       window.open(window.location.origin + '#/goodsDetails?productId=' + id)
+    },
+    delItem (itemId) {
+      if (this.login) {
+        let userId = getStore('userId')
+        let params = {
+          userId: userId,
+          itemId: itemId
+        }
+        deleteCart(params).then(this.EDIT_CART({ itemId }))
+      } else {
+        this.EDIT_CART({ itemId })
+      }
     },
     // 全选
     editCheckAll () {
@@ -241,10 +253,17 @@ export default {
     },
     // 删除整条购物车
     cartdel (itemId) {
-      // cartDel({userId: this.userId, productId}).then(res => {
-      //   this.EDIT_CART({productId})
-      // })
-      this.EDIT_CART({ itemId })
+      console.log(itemId)
+      if (this.login) {
+        let userId = getStore('userId')
+        let params = {
+          userId: userId,
+          itemId: itemId
+        }
+        deleteCart(params).then(this.EDIT_CART({ itemId }))
+      } else {
+        this.EDIT_CART({ itemId })
+      }
     },
     checkout () {
       this.checkoutNow = '结算中...'

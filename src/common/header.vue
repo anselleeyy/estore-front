@@ -5,7 +5,7 @@
         <div class="w-box">
           <div class="nav-logo">
             <h1 @click="changePage(0, '/')">
-              <router-link to="/" title="学子商城">学子商城</router-link>
+              <router-link to="/" title="e-store">e-store 书城</router-link>
             </h1>
           </div>
           <div class="right-box">
@@ -136,7 +136,7 @@ import 'element-ui/lib/theme-chalk/index.css'
 import YButton from '../components/YButton'
 import { mapMutations, mapState } from 'vuex'
 import { getStore, setStore } from '../utils/storage'
-import { navList, delToken, getCartList } from '../api'
+import { navList, delToken, getCartList, pushCartList, itemInfo, deleteCart } from '../api'
 
 export default {
   components: {
@@ -230,7 +230,16 @@ export default {
       this.SHOW_CART({ showCart: state })
     },
     delGoods (itemId) {
-      this.EDIT_CART({ itemId })
+      if (this.login) {
+        let userId = getStore('userId')
+        let params = {
+          userId: userId,
+          itemId: itemId
+        }
+        deleteCart(params).then(this.EDIT_CART({ itemId }))
+      } else {
+        this.EDIT_CART({ itemId })
+      }
     },
     toCart () {
       this.$router.push({ path: '/cart' })
@@ -292,17 +301,59 @@ export default {
     },
     async _getCartList () {
       let userId = getStore('userId')
-      await getCartList(userId).then(res => {
-        console.log(res)
-        console.log(getStore('buyCart'))
-      })
+      let result = await getCartList(userId)
+      result = result.result
+      let cartList = []
+      for (let i in result) {
+        let res = await itemInfo(result[i].itemId)
+        let param = {
+          itemId: result[i].itemId,
+          price: res.result.price,
+          itemNum: result[i].number,
+          title: res.result.title,
+          picUrl: res.result.picUrl,
+          checked: '1',
+          isOnline: true
+        }
+        cartList.push(param)
+      }
+      setStore('buyCart', cartList)
+      this.INIT_BUYCART()
+    },
+    async _pushCartList () {
+      let userId = getStore('userId')
+      let localCartList = getStore('buyCart')
+      localCartList = JSON.parse(localCartList)
+      let pushList = []
+      for (let i in localCartList) {
+        if (localCartList[i].isOnline) {
+          continue
+        }
+        let param = {
+          userId: userId,
+          itemId: localCartList[i].itemId,
+          number: localCartList[i].itemNum,
+          status: 1
+        }
+        pushList.push(param)
+      }
+      console.log(pushList)
+      await pushCartList(pushList).then(res => {
+        if (res.code === 20001) {
+          console.log('cart add success')
+        } else {
+          console.error('cart add failed')
+        }
+      }).then(this._getCartList)
     }
   },
   mounted () {
     this._getNavList()
     this.token = getStore('token')
     if (this.login) {
-      this._getCartList()
+      // 登录态首先同步本地购物车信息
+      this._pushCartList()
+      // this._getCartList()
     } else {
       this.INIT_BUYCART()
     }

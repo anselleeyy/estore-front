@@ -83,3 +83,15 @@ export const addAddress = (params) => {
 export const delToken = (params) => {
   return api.fetchDel('/user/logout', params)
 }
+
+export const pushCartList = (params) => {
+  return api.fetchPost('/cart/push', params)
+}
+
+export const updateCart = (params) => {
+  return api.fetchPut('/cart/update', params)
+}
+
+export const deleteCart = (params) => {
+  return api.fetchDel('/cart/delete', params)
+}

@@ -4,6 +4,7 @@
     <div class="select">
       <span class="down"
             @click.stop.prevent="down()"
+            @click="change(-1)"
             :class="{ 'down-disabled' :Num <= 1 }">-
       </span>
       <span class="num">
@@ -17,11 +18,16 @@
                   </ul>
       </span>
       <span class="up" :class="{ 'up-disabled' :Num >= limit }"
-            @click.stop.prevent="up()">+</span>
+            @click.stop.prevent="up()"
+            @click="change(1)">+</span>
     </div>
   </div>
 </template>
 <script>
+import { updateCart, itemInfo } from '../api'
+import { getStore } from '../utils/storage'
+import { mapMutations } from 'vuex'
+
 export default {
   props: {
     num: {
@@ -33,10 +39,6 @@ export default {
     },
     checked: {
       type: [String, Boolean]
-    },
-    limit: {
-      type: Number,
-      default: 10
     }
   },
   computed: {},
@@ -45,15 +47,30 @@ export default {
       show: true,
       flag: true,
       Num: this.num,
-      numList: []
+      numList: [],
+      limit: 10
     }
   },
   methods: {
+    ...mapMutations(['ADD_CART', 'INIT_BUYCART', 'ADD_ANIMATION', 'SHOW_CART', 'REDUCE_CART', 'RECORD_USERINFO', 'EDIT_CART']),
     up () {
       if (this.flag && this.Num < this.limit) {
         this.ani('up')
       }
       return false
+    },
+    change (num) {
+      let userId = getStore('userId')
+      let number = this.Num
+      let itemId = this.id
+      console.log(this.Num)
+      let params = {
+        number: num,
+        userId: userId,
+        itemId: itemId
+      }
+      // 异步更新
+      updateCart(params).then(this.EDIT_CART({ itemId: itemId, itemNum: number }))
     },
     down () {
       if (this.flag && this.Num > 1) {
@@ -97,7 +114,19 @@ export default {
       domStyle.zIndex = '1'
       domStyle.transition = 'all 0s'
       domStyle.transform = 'translateY(-36px)' // 回到原位
+    },
+    async getLimit () {
+      await itemInfo(this.id).then(res => {
+        if (res.result.itemDetail !== null) {
+          this.limit = res.result.itemDetail.limitNum
+        } else {
+          this.limit = 10
+        }
+      })
     }
+  },
+  created () {
+    this.getLimit()
   }
 }
 </script>
