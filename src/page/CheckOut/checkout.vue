@@ -116,7 +116,7 @@ import YButton from '../../components/YButton'
 import YPopup from '../../components/popup'
 import YShelf from '../../components/shelf'
 import { getStore } from '../../utils/storage'
-import { getCartList, getAllAddress } from '../../api'
+import { getCartList, getAllAddress, createOrder } from '../../api'
 
 export default {
   name: 'checkout',
@@ -187,10 +187,35 @@ export default {
         }
       })
     },
-    _submitOrder () {
-      console.log(this.msg)
-      console.log(this.cartList)
-      console.log(this.checkPrice)
+    async _submitOrder () {
+      this.submit = true
+      let details = []
+      for (let i in this.cartList) {
+        let item = this.cartList[i]
+        let detail = {
+          itemId: item.itemId,
+          num: item.itemNum,
+          picUrl: item.picUrl,
+          price: item.price,
+          title: item.title,
+          totalFee: item.price * item.itemNum
+        }
+        details.push(detail)
+      }
+      let param = {
+        payment: this.checkPrice,
+        userId: this.userId,
+        addressId: this.msg.addressId,
+        details: details
+      }
+      await createOrder(param).then(res => {
+        if (res.code === 70001) {
+          this.$message.success('订单提交成功')
+          this.$router.push('/user/orderCenter')
+        } else {
+          this.$message.error('订单提交失败')
+        }
+      })
     },
     // 付款
     payment (orderId) {

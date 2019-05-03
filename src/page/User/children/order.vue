@@ -7,7 +7,7 @@
             <div class="gray-sub-title cart-title">
               <div class="first">
                 <div>
-                  <span class="date" v-text="item.orderId"></span>
+                  <span class="date">{{dateFormat(item.createTime)}}</span>
                   <span class="order-id"> 订单号： <a @click="orderDetail(item.orderId)">{{ item.orderId }}</a> </span>
                 </div>
                 <div class="f-bc">
@@ -22,7 +22,7 @@
               </div>
             </div>
             <div class="pr">
-              <div class="cart" v-for="(good, j) in item.goodsList" :key="j">
+              <div class="cart" v-for="(good, j) in item.details" :key="j">
                 <div class="cart-l" :class="{bt:j>0}">
                   <div class="car-l-l">
                     <div class="img-box"><a @click="goodsDetails(good.itemId)"><img :src="good.picUrl" alt=""></a></div>
@@ -30,7 +30,7 @@
                   </div>
                   <div class="cart-l-r">
                     <div>¥ {{ Number(good.price).toFixed(2) }}</div>
-                    <div class="num">{{ good.itemNum }}</div>
+                    <div class="num">{{ good.num }}</div>
                     <div class="type">
                       <el-button style="margin-left:20px"  type="danger" size="small" v-if="j<1" class="del-order">删除此订单</el-button>
                       <!--@click="_delOrder(item.orderId,i)"-->
@@ -43,11 +43,11 @@
                 </div>
               </div>
               <div class="prod-operation pa" style="right: 0;top: 0;">
-                <div class="total">¥ {{ item.orderTotal }}</div>
-                <div v-if="item.orderStatus === '0'">
-                  <el-button @click="orderPayment(item.orderId)" type="primary" size="small">现在付款</el-button>
+                <div class="total">¥ {{ item.payment }}</div>
+                <div v-if="item.status === 0">
+                  <el-button disabled @click="orderPayment(item.orderId)" type="primary" size="small">现在付款</el-button>
                 </div>
-                <div class="status" v-if="item.orderStatus !== '0'"> {{ getOrderStatus(item.orderStatus) }}  </div>
+                <div class="status" v-if="item.status !== 0"> {{ getOrderStatus(item.orderStatus) }}  </div>
               </div>
             </div>
           </div>
@@ -76,51 +76,14 @@
 <script>
 import YShelf from '../../../components/shelf'
 import { getStore } from '../../../utils/storage'
+import { getOrders } from '../../../api'
 
 export default {
   name: 'order',
   data () {
     return {
       testList: [],
-      orderList: [
-        {
-          addressInfo: {
-            addressId: null,
-            isDefault: null,
-            streetName: '1',
-            tel: '1',
-            userId: null,
-            userName: '11111'
-          },
-          closeDate: null,
-          createDate: '2018-08-25 15:10',
-          finishDate: null,
-          goodsList: [
-            {
-              checked: null,
-              limitNum: null,
-              productId: 150642571432845,
-              productImg: 'https://resource.smartisan.com/resource/2f9a0f5f3dedf0ed813622003f1b287b.jpg',
-              productName: 'Smartisan 帆布鞋',
-              productNum: 1,
-              salePrice: 199
-            },
-            {
-              checked: null,
-              limitNum: null,
-              productId: 150642571432839,
-              productImg: 'https://resource.smartisan.com/resource/5e4b1feddb13639550849f12f6b2e202.jpg',
-              productName: '坚果 3 TPU 软胶透明保护套',
-              productNum: 1,
-              salePrice: 29
-            }
-          ],
-          orderId: 153518101085683,
-          orderStatus: '0',
-          orderTotal: 232.10,
-          payDate: null
-        }
-      ],
+      orderList: [],
       userId: '',
       orderStatus: '1',
       loading: true,
@@ -130,6 +93,13 @@ export default {
     }
   },
   methods: {
+    dateFormat (time) {
+      console.log(time)
+      let date = new Date(time)
+      date = new Date(date - 13 * 60 * 60 * 1000)
+      console.log(date)
+      return date.toLocaleString()
+    },
     message (m) {
       this.$message({
         message: m,
@@ -138,11 +108,11 @@ export default {
     },
     handleSizeChange (val) {
       this.pageSize = val
-      // this._orderList()
+      // this._getOrderList()
     },
     handleCurrentChange (val) {
       this.currentPage = val
-      // this._orderList()
+      this._getOrderList()
     },
     orderPayment (orderId) {
       window.open(window.location.origin + '#/order/payment?orderId=' + orderId)
@@ -173,18 +143,22 @@ export default {
         return '支付失败'
       }
     },
-    _getOrderList () {
-      this.orderList[0].goodsList = JSON.parse(getStore('buyCart'))
+    async _getOrderList () {
+      this.loading = true
+      let params = {
+        currentPage: this.currentPage,
+        pageSize: this.pageSize
+      }
+      this.orderList = await getOrders(this.userId, params).then(res => {
+        this.total = res.result.total
+        return res.result.list
+      })
       this.loading = false
     }
   },
   created () {
     this.userId = getStore('userId')
-    console.log('orderList')
-    console.log(this.orderList)
-    console.log(1)
     this._getOrderList()
-    console.log(this.orderList.goodsList)
   },
   components: {
     YShelf
@@ -320,5 +294,8 @@ export default {
     div:last-child {
       padding-right: 24px;
     }
+  }
+  .pa {
+    position: absolute;
   }
 </style>
