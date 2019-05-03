@@ -94,10 +94,8 @@ export default {
   },
   methods: {
     dateFormat (time) {
-      console.log(time)
       let date = new Date(time)
       date = new Date(date - 13 * 60 * 60 * 1000)
-      console.log(date)
       return date.toLocaleString()
     },
     message (m) {

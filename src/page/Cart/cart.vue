@@ -183,7 +183,7 @@ export default {
       })
     },
     goodsDetails (id) {
-      window.open(window.location.origin + '#/goodsDetails?productId=' + id)
+      window.open(window.location.origin + '#/goodsDetail?itemId=' + id)
     },
     delItem (itemId) {
       if (this.login) {
@@ -214,24 +214,6 @@ export default {
           itemNum
         }
       )
-      // cartEdit(
-      //   {
-      //     userId,
-      //     productId,
-      //     productNum,
-      //     checked
-      //   }
-      // ).then(res => {
-      //   if (res.success === true) {
-      //     this.EDIT_CART(
-      //       {
-      //         productId,
-      //         checked,
-      //         productNum
-      //       }
-      //     )
-      //   }
-      // })
     },
     // 修改购物车
     editCart (type, item) {
@@ -273,7 +255,6 @@ export default {
   },
   mounted () {
     this.userId = getStore('userId')
-    this.INIT_BUYCART()
   },
   components: {
     YButton,

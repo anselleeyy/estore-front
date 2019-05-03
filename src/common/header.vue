@@ -303,6 +303,7 @@ export default {
       let userId = getStore('userId')
       let result = await getCartList(userId)
       result = result.result
+      console.log(result)
       let cartList = []
       for (let i in result) {
         let res = await itemInfo(result[i].itemId)
@@ -317,6 +318,7 @@ export default {
         }
         cartList.push(param)
       }
+      console.log(cartList)
       setStore('buyCart', cartList)
       this.INIT_BUYCART()
     },
@@ -326,6 +328,7 @@ export default {
       localCartList = JSON.parse(localCartList)
       let pushList = []
       for (let i in localCartList) {
+        console.log(localCartList[i])
         if (localCartList[i].isOnline) {
           continue
         }

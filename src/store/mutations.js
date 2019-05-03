@@ -12,14 +12,15 @@ import {
 import { getStore, setStore } from '../utils/storage'
 
 export default {
-  [ADD_CART] (state, { itemId, price, title, picUrl, itemNum = 1 }) {
+  [ADD_CART] (state, { itemId, price, title, picUrl, isOnline, itemNum = 1 }) {
     let cart = state.cartList
     let flag = true
     let goods = {
       itemId,
       price,
       title,
-      picUrl
+      picUrl,
+      isOnline
     }
     if (cart.length) {
       cart.forEach(item => {
