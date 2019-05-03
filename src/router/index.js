@@ -6,6 +6,8 @@ const Home = () => import('../page/Home/home')
 const Login = () => import('../page/Login/login')
 const Goods = () => import('../page/Goods/goods')
 const goodsDetail = () => import('../page/Goods/goodsDetail')
+const search = () => import('../page/Search/search')
+const refreshSearch = () => import('../page/Search/refreshSearch')
 
 // 用户中心
 const user = () => import('../page/User/user')
@@ -29,9 +31,11 @@ export default new Router({
       children: [
         { path: 'home', component: Home },
         { path: 'goods', component: Goods },
-        { path: 'goodsDetail', component: goodsDetail, name: 'goodsDetail' }
+        { path: 'goodsDetail', component: goodsDetail, name: 'goodsDetail' },
+        { path: '/refreshSearch', name: 'refreshSearch', component: refreshSearch }
       ]
     },
+    { path: '/search', name: 'search', component: search },
     {
       path: '/login',
       name: 'login',

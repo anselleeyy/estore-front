@@ -95,3 +95,15 @@ export const updateCart = (params) => {
 export const deleteCart = (params) => {
   return api.fetchDel('/cart/delete', params)
 }
+
+export const createOrder = (params) => {
+  return api.fetchPost('/order/create', params)
+}
+
+export const getOrders = (id, params) => {
+  return api.fetchGet('/order/' + id, params)
+}
+
+export const searchItem = (keyword, params) => {
+  return api.fetchGet('/item/search/' + keyword, params)
+}
