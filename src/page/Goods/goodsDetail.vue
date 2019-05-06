@@ -31,7 +31,7 @@
         </div>
         <div class="num">
           <span class="params-name">数量</span>
-          <buy-num @edit-num="editNum" :limit="Number(item.itemDetail.limitNum)"></buy-num>
+          <buy-num @edit-num="editNum" :lim="Number(item.itemDetail.limitNum)"></buy-num>
         </div>
         <div class="" style="padding: 0px 0 8px 10px;">
           <span class="params-name">库存：<span class="item-num-limit">{{Number(item.itemDetail.limitNum)}}</span></span>
@@ -66,7 +66,8 @@
       <y-shelf title="产品信息">
         <div slot="content">
           <div class="img-item" v-if="productMsg">
-            <div v-html="productMsg">{{ productMsg }}</div>
+            <!--<div v-html="productMsg">{{ productMsg }}</div>-->
+            <img :src="item.itemDetail.detailPicUrl" height="90%" width="90%"/>
           </div>
           <div class="no-info" v-else>
             <img src="/static/images/no-data.png">

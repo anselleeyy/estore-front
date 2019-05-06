@@ -39,6 +39,9 @@ export default {
     },
     checked: {
       type: [String, Boolean]
+    },
+    lim: {
+      type: [Number]
     }
   },
   computed: {},
@@ -126,7 +129,11 @@ export default {
     }
   },
   created () {
-    this.getLimit()
+    if (!this.lim) {
+      this.getLimit()
+    } else {
+      this.limit = this.lim
+    }
   }
 }
 </script>
