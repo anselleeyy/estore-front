@@ -112,7 +112,7 @@ export default {
     that.init_geetest()
     // that.init_3D()
     that.showLogin = true
-    that.open('登录提示', '测试体验账号： admin | admin')
+    that.open('登录提示', '测试体验账号： test | test')
   },
   methods: {
     submitForm (formName) {

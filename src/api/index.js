@@ -107,3 +107,7 @@ export const getOrders = (id, params) => {
 export const searchItem = (keyword, params) => {
   return api.fetchGet('/item/search/' + keyword, params)
 }
+
+export const delOrder = (orderId) => {
+  return api.fetchDel('/order/delete/' + orderId)
+}

@@ -32,7 +32,7 @@
                     <div>¥ {{ Number(good.price).toFixed(2) }}</div>
                     <div class="num">{{ good.num }}</div>
                     <div class="type">
-                      <el-button style="margin-left:20px"  type="danger" size="small" v-if="j<1" class="del-order">删除此订单</el-button>
+                      <el-button style="margin-left:20px"  type="danger" size="small" v-if="j<1" @click="_delOrder(item.orderId, i)" class="del-order">删除此订单</el-button>
                       <!--@click="_delOrder(item.orderId,i)"-->
                     </div>
                   </div>
@@ -76,7 +76,7 @@
 <script>
 import YShelf from '../../../components/shelf'
 import { getStore } from '../../../utils/storage'
-import { getOrders } from '../../../api'
+import { getOrders, delOrder } from '../../../api'
 
 export default {
   name: 'order',
@@ -93,6 +93,17 @@ export default {
     }
   },
   methods: {
+    async _delOrder (orderId, i) {
+      console.log(orderId)
+      await delOrder(orderId).then(res => {
+        if (res.code === 80009) {
+          this.$message.success('订单删除成功')
+          this.orderList.splice(i, 1)
+        } else {
+          this.$message.error('订单删除失败，请稍后再试')
+        }
+      })
+    },
     dateFormat (time) {
       let date = new Date(time)
       date = new Date(date - 13 * 60 * 60 * 1000)
