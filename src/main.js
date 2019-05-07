@@ -22,7 +22,7 @@ Vue.prototype.$loading = ElementUI.Loading.service
 Vue.prototype.$notify = ElementUI.Notification
 Vue.prototype.$message = ElementUI.Message
 
-const whiteList = [ '/home', '/login', '/goodsDetail', '/goods', '/search' ]
+const whiteList = [ '/home', '/login', '/goodsDetail', '/goods', '/search', '/refreshSearch' ]
 router.beforeEach(function (to, from, next) {
   let params = {
     token: getStore('token')

@@ -31,11 +31,11 @@ export default new Router({
       children: [
         { path: 'home', component: Home },
         { path: 'goods', component: Goods },
-        { path: 'goodsDetail', component: goodsDetail, name: 'goodsDetail' },
-        { path: '/refreshSearch', name: 'refreshSearch', component: refreshSearch }
+        { path: 'goodsDetail', component: goodsDetail, name: 'goodsDetail' }
       ]
     },
     { path: '/search', name: 'search', component: search },
+    { path: '/refreshSearch', name: 'refreshSearch', component: refreshSearch },
     {
       path: '/login',
       name: 'login',
