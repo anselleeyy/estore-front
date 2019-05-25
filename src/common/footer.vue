@@ -21,25 +21,25 @@
         <ul class="c0">
           <h3 class="c1">技术开源</h3>
           <ul>
-            <li class="c2"><a class="c3" target="_blank" href="https://github.com/anselleeyy">官方 github</a></li>
-            <li class="c2"><a class="c3" target="_blank" href="https://github.com/Exrick/xmall-front">项目前端</a></li>
-            <li class="c2"><a class="c3" target="_blank" href="https://github.com/Exrick/xmall">项目后端</a></li>
+            <li class="c2"><a class="c3" target="_blank" href="#">官方 github</a></li>
+            <li class="c2"><a class="c3" target="_blank" href="#">项目前端</a></li>
+            <li class="c2"><a class="c3" target="_blank" href="#">项目后端</a></li>
           </ul>
         </ul>
         <ul class="c0">
           <h3 class="c1">开发者信息</h3>
           <ul>
-            <li class="c2"><a class="c3" target="_blank" href="https://blog.csdn.net/AnselLyy">个人博客</a></li>
-            <li class="c2"><a class="c3" target="_blank" href="https://www.ltysyn.cn">个人网站</a></li>
-            <li class="c2"><a class="c3" target="_blank" href="https://github.com/anselleeyy">github 地址</a></li>
+            <li class="c2"><a class="c3" target="_blank" href="#">个人博客</a></li>
+            <li class="c2"><a class="c3" target="_blank" href="#">个人网站</a></li>
+            <li class="c2"><a class="c3" target="_blank" href="#">github 地址</a></li>
           </ul>
         </ul>
         <ul class="c0">
           <h3 class="c1">其他项目</h3>
           <ul>
-            <li class="c2"><a class="c3" target="_blank" href="http://xpay.exrick.cn">待开发...</a></li>
-            <li class="c2"><a class="c3" target="_blank" href="http://shouji.baidu.com/software/11783429.html">待开发...</a></li>
-            <li class="c2"><a class="c3" target="_blank" href="https://github.com/anselleeyy">待开发...</a></li>
+            <li class="c2"><a class="c3" target="_blank" href="#">待开发...</a></li>
+            <li class="c2"><a class="c3" target="_blank" href="#">待开发...</a></li>
+            <li class="c2"><a class="c3" target="_blank" href="#">待开发...</a></li>
           </ul>
         </ul>
         <ul class="c0">
@@ -51,13 +51,13 @@
           </ul>
         </ul>
         <ul class="c4">
-          <li class="tel"><a class="c5" href="#" target="_blank">573459407@qq.com</a></li>
+          <li class="tel"><a class="c5" href="#" target="_blank">85925149@qq.com</a></li>
           <li class="time">联系我（周一至周五 10:00-21:00）</li>
         </ul>
       </div>
 
       <div class="copyright">
-        <h4 class="content-c2">Copyright ©2018, www.ltysyn.cn Co., Ltd. All Rights Reserved.本网站设计内容大部分采自锤子科技</h4>
+        <h4 class="content-c2">Copyright ©2018, Co., Ltd. All Rights Reserved.本网站设计内容大部分采自锤子科技</h4>
         <div class="pdl-10"></div>
         <a class="border-left-1 content-c1" href="https://www.ltysyn.cn/" target="_blank">
           <span class="content-c3">苏ICP备17002894号</span>
@@ -67,7 +67,7 @@
         <ul class="privacy">
           <li class="content-c1"><a class="content-c0" @click="open1">法律声明</a></li>
           <li class="content-c1 border-left-1"><a class="content-c0" @click="open2">隐私条款</a></li>
-          <li class="content-c1 border-left-1"><a class="content-c0" target="_blank" href="https://github.com/anselleeyy">开发者中心</a></li>
+          <li class="content-c1 border-left-1"><a class="content-c0" href="#">开发者中心</a></li>
         </ul>
       </div>
     </div>

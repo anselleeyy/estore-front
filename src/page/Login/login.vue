@@ -19,7 +19,7 @@
           </el-form-item>
           <el-form-item>
             <el-button type="primary" plain @click="submitForm('loginForm')" class="submit_btn">{{ loginTxt }}</el-button>
-            <el-button type="warning" plain class="submit_btn">重置</el-button>
+            <el-button type="warning" plain @click="reset('loginForm')" class="submit_btn">重置</el-button>
             <br>
             <span style="font-size: 12px">还没有注册？<a @click="turn_to_reg">立即注册</a></span>
           </el-form-item>
@@ -48,7 +48,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" plain @click="toReg('regForm')" class="submit_btn">{{ regTxt }}</el-button>
-        <el-button type="warning" plain class="submit_btn">重置</el-button>
+        <el-button type="warning" plain @click="reset('regForm')" class="submit_btn">重置</el-button>
         <br>
       </div>
       <!--</div>-->
@@ -115,6 +115,9 @@ export default {
     that.open('登录提示', '测试体验账号： test | test')
   },
   methods: {
+    reset (formName) {
+      this.$refs[formName].resetFields()
+    },
     submitForm (formName) {
       this.loginTxt = '登录中 ...'
       if (!this.loginForm.username || !this.loginForm.password) {

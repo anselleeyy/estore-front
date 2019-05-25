@@ -283,6 +283,8 @@ export default {
     // 退出登录
     async _logout () {
       await setStore('token', '')
+      await setStore('userId', '')
+      this.$store.commit('RECORD_USERINFO', {})
       let data = {
         'token': this.token
       }
@@ -293,7 +295,8 @@ export default {
           // ,onClose: this.$router.go({path: '/home'})
         })
         this.sleep(1500).then(() => {
-          this.$router.push({path: '/home'})
+          // this.$router.go({name: 'index'})
+          window.location.href = '/'
         })
       } else {
         this.$message.error('退出失败，请稍后重试')
