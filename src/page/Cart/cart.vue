@@ -207,11 +207,12 @@ export default {
     },
     // 修改购物车
     _cartEdit (userId, itemId, itemNum, checked) {
+      console.log(itemId, itemNum, checked)
       this.EDIT_CART(
         {
           itemId,
-          checked,
-          itemNum
+          itemNum,
+          checked
         }
       )
     },

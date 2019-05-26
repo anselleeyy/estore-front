@@ -46,7 +46,7 @@
               </div>
               <!--列表-->
               <div class="cart-table" v-for="(item,i) in cartList" :key="i">
-                <div class="cart-group divide pr" :data-productid="item.itemId">
+                <div class="cart-group divide pr" :data-productid="item.itemId" v-if="item.checked === '1'">
                   <div class="cart-top-items">
                     <div class="cart-items clearfix">
                       <!--图片-->
@@ -68,7 +68,7 @@
                       <!--商品数量-->
                       <div>
                         <!--总价格-->
-                        <div class="subtotal" style="font-size: 14px">¥ {{item.price * item.itemNum}}</div>
+                        <div class="subtotal" style="font-size: 14px">¥ {{(item.price * item.itemNum).toFixed(2)}}</div>
                         <!--数量-->
                         <div class="item-cols-num">
                           <span v-text="item.itemNum"></span>
@@ -87,7 +87,7 @@
                 <div class="shipping">
                   <div class="shipping-box" style="padding: 0 40px;">
                     <div class="shipping-total shipping-price"><h4
-                      class="highlight">应付总额：<em>￥{{checkPrice}}</em>
+                      class="highlight">应付总额：<em>￥{{checkPrice.toFixed(2)}}</em>
                     </h4>
                     </div>
                   </div>
@@ -235,7 +235,7 @@ export default {
   },
   created () {
     this.userId = getStore('userId')
-    this.cartList = JSON.parse(getStore('buyCart'))
+    this.cartList = this.$store.state.cartList
     this._addressList()
   },
   components: {

@@ -60,6 +60,7 @@ export default {
       cart.forEach((item, i) => {
         if (item.itemId === itemId) {
           item.itemNum = itemNum
+          item.checked = checked
         }
       })
     } else if (itemId) {
